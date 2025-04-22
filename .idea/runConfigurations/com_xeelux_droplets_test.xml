@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="com.xeelux.droplets.test" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.xeelux.droplets.test.Main" />
+    <module name="com.xeelux.droplets.test" />
+    <option name="PROGRAM_PARAMETERS" value="--applicationName test --instanceId da" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="bd.com.momagic.cbs.test.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

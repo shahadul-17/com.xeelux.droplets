@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.xeelux.droplets</groupId>
+    <artifactId>com.xeelux.droplets</artifactId>
+    <description>Fast, secure, and hassle-free file sharing across any platform. One simple tool that works everywhere.</description>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <maven.compiler.source>24</maven.compiler.source>
+        <maven.compiler.target>24</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <modules>
+        <module>com.xeelux.droplets.core</module>
+        <module>com.xeelux.droplets.test</module>
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.14.0</version>
+                </plugin>
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.7.1</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <mainClass>${main.class}</mainClass>
+                            </manifest>
+                        </archive>
+                        <descriptorRefs>
+                            <descriptorRef>jar-with-dependencies</descriptorRef>
+                        </descriptorRefs>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/build</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/com.xeelux.droplets.chargingserver/target</directory>
+                                    <includes>
+                                        <include>*-jar-with-dependencies.jar</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,17 @@
+{
+  "version": 1.0,
+  "profile": "production",
+  "host": "127.0.0.1",
+  "port": 41191,
+  "includeStackTrace": true,
+  "msisdnRegularExpression": "1[3456789][0-9]{8}",
+  "performanceTuner": {
+    "lambda": 0.0025,
+    "sleepTimeoutInMilliseconds": 10
+  },
+  "virtualThreadScheduler": {
+    "availablePlatformThreadCount": 16,
+    "maximumPlatformThreadPoolSize": 192,
+    "minimumUnblockedPlatformThreadCount": 4
+  }
+}
