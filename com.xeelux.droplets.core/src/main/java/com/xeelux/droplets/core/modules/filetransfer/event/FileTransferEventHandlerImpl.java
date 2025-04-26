@@ -27,6 +27,8 @@ public class FileTransferEventHandlerImpl
             AsyncTask.run(() -> {
                 try {
                     switch (eventArguments.getEventType()) {
+                        case CLIENT_START -> eventListener.onClientStart(eventArguments);
+                        case CLIENT_STOP -> eventListener.onClientStop(eventArguments);
                         case SERVER_START -> eventListener.onServerStart(eventArguments);
                         case SERVER_AWAITING_CONNECTION -> eventListener.onServerAwaitingConnection(eventArguments);
                         case SERVER_STOP -> eventListener.onServerStop(eventArguments);

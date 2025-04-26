@@ -75,6 +75,9 @@ class FileTransferClientHandlerImpl implements FileTransferClientHandler {
 
         switch (connectionType) {
             case CONTROL -> {
+                if (!connection.tryWriteInt64(connection.getConnectionId())) { return; }
+                if (!connection.tryFlush()) { return; }
+
                 clientHandlerCollection.put(connection.getConnectionId(), this);
             }
             default -> {

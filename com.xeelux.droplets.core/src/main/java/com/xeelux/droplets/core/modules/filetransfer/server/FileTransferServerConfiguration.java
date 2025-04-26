@@ -12,7 +12,7 @@ public interface FileTransferServerConfiguration extends JsonSerializable {
     int getBacklog();
     FileTransferServerConfiguration setBacklog(final int backlog);
 
-    static FileTransferServerConfiguration createInstance() {
+    static FileTransferServerConfiguration create() {
         return new FileTransferServerConfigurationImpl();
     }
 }
