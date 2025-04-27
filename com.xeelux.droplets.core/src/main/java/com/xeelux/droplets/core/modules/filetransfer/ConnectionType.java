@@ -7,8 +7,11 @@ public enum ConnectionType {
 
     NONE((byte) 0),
     CONTROL((byte) 1),
-    TEXT((byte) 2),
-    STREAM((byte) 3);
+    UNIQUE_SESSION_ID((byte) 2),
+    DOWNLOAD_FILE((byte) 3),
+    UPLOAD_FILE((byte) 4),
+    TEXT((byte) 5),
+    STREAM((byte) 6);
 
     private final byte value;
 

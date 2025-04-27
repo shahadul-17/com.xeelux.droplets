@@ -118,7 +118,7 @@ public class FileTransferClientImpl implements FileTransferClient, Runnable {
             FileTransferEventArguments.createInstance()
                     .setSender(this)
                     .setEventType(FileTransferEventType.EXCEPTION)
-                    .setMessage("An exception occurred while binding the file transfer server on " + configuration.getHost() + ":" + configuration.getPort())
+                    .setMessage("An exception occurred while connecting to the file transfer server running on " + configuration.getHost() + ":" + configuration.getPort())
                     .setThrowable(throwable)
                     .executeEventListener(eventHandler);
 
@@ -151,14 +151,14 @@ public class FileTransferClientImpl implements FileTransferClient, Runnable {
                 .executeEventListener(connection.getEventHandler());
 
         // if writing connection type fails...
-        if (!connection.tryWriteByte(ConnectionType.CONTROL.getValue())) { return; }
+        if (!connection.tryWriteByte(ConnectionType.UNIQUE_SESSION_ID.getValue())) { return; }
         // if flushing fails...
         if (!connection.tryFlush()) { return; }
 
         // we shall receive the connection ID...
-        final var connectionId = connection.tryReadInt64();
+        final var sessionId = connection.tryReadString();
 
-        System.out.println("Connection ID = " + connectionId);
+        System.out.println("Session ID = " + sessionId);
 
         // closing the server socket...
         // CloseableUtilities.tryClose(serverSocket);

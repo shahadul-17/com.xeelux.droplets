@@ -1,6 +1,8 @@
 package com.xeelux.droplets.core.modules.filetransfer.server;
 
 import com.xeelux.droplets.core.common.EventHandler;
+import com.xeelux.droplets.core.common.UidGenerator;
+import com.xeelux.droplets.core.dependencyinjection.ServiceProvider;
 import com.xeelux.droplets.core.modules.filetransfer.ConnectionType;
 import com.xeelux.droplets.core.modules.filetransfer.FileTransferConnection;
 import com.xeelux.droplets.core.modules.filetransfer.FileTransferConnectionImpl;
@@ -50,6 +52,59 @@ class FileTransferClientHandlerImpl implements FileTransferClientHandler {
         AsyncTask.run(this);
     }
 
+    private boolean handleClientRequest() {
+        final var connectionTypeAsByte = connection.tryReadByte();
+        connectionType = ConnectionType.from(connectionTypeAsByte);
+
+        System.out.println("Received connection type from client: " + connectionType.name());
+
+        if (connectionType == ConnectionType.NONE) {
+            final var message = "Invalid connection type received from the client socket ("
+                    + connection.getConnectionId() + "@" + connection.getRemoteHost() + ":" + connection.getRemotePort() + ").";
+
+            // if exception occurs, executing the event listener...
+            FileTransferEventArguments.createInstance()
+                    .setSender(this)
+                    .setEventType(FileTransferEventType.EXCEPTION)
+                    .setConnectionId(connection.getConnectionId())
+                    .setRemoteHost(connection.getRemoteHost())
+                    .setRemotePort(connection.getRemotePort())
+                    .setMessage(message)
+                    .setThrowable(new Exception(message))
+                    .executeEventListener(connection.getEventHandler());
+
+            return false;
+        }
+
+        if (connectionType == ConnectionType.CONTROL) {
+            // placing the client handler to the collection for later use...
+            clientHandlerCollection.put(connection.getConnectionId(), this);
+
+            return true;
+        }
+
+        if (connectionType == ConnectionType.UNIQUE_SESSION_ID) {
+            // generating a unique session ID...
+            final var sessionId = UidGenerator.getInstance().generate();
+
+            // writing the session ID to the connection...
+            if (!connection.tryWriteString(sessionId)) { return false; }
+            if (!connection.tryFlush()) { return false; }
+        }
+
+        // NOTE: MUST REMEMBER THAT, EACH UPLOAD SHALL BE PERFORMED ON A DEDICATED CONNECTION JUST LIKE HTTP...!!!
+
+        if (connectionType == ConnectionType.UPLOAD_FILE) {
+
+        }
+
+        if (connectionType == ConnectionType.DOWNLOAD_FILE) {
+
+        }
+
+        return false;
+    }
+
     @Override
     public void run() {
         // initializing the connection...
@@ -68,33 +123,6 @@ class FileTransferClientHandlerImpl implements FileTransferClientHandler {
                 .setRemotePort(connection.getRemotePort())
                 .executeEventListener(connection.getEventHandler());
 
-        final var connectionTypeAsByte = connection.tryReadByte();
-        connectionType = ConnectionType.from(connectionTypeAsByte);
-
-        System.out.println(connectionType.name());
-
-        switch (connectionType) {
-            case CONTROL -> {
-                if (!connection.tryWriteInt64(connection.getConnectionId())) { return; }
-                if (!connection.tryFlush()) { return; }
-
-                clientHandlerCollection.put(connection.getConnectionId(), this);
-            }
-            default -> {
-                final var message = "Invalid connection type received from the client socket ("
-                        + connection.getConnectionId() + "@" + connection.getRemoteHost() + ":" + connection.getRemotePort() + ").";
-
-                // if exception occurs, executing the event listener...
-                FileTransferEventArguments.createInstance()
-                        .setSender(this)
-                        .setEventType(FileTransferEventType.EXCEPTION)
-                        .setConnectionId(connection.getConnectionId())
-                        .setRemoteHost(connection.getRemoteHost())
-                        .setRemotePort(connection.getRemotePort())
-                        .setMessage(message)
-                        .setThrowable(new Exception(message))
-                        .executeEventListener(connection.getEventHandler());
-            }
-        }
+        while (handleClientRequest());
     }
 }
