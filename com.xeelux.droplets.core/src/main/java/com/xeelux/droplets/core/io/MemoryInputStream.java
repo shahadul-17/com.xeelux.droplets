@@ -31,6 +31,7 @@ public interface MemoryInputStream extends Closeable {
 	byte[] readBytes(final int length) throws IllegalArgumentException, IOException;
 	byte readByte() throws IOException;
 	int read() throws IOException;
+	int read(final byte[] buffer, final int offset, final int length) throws IOException;
 	String readString(final int length) throws IllegalArgumentException, IOException;
 	String readString(final int length, final Charset charset) throws IllegalArgumentException, IOException;
 	InputStream asInputStream();

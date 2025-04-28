@@ -139,6 +139,36 @@ class MemoryInputStreamImpl extends InputStream implements MemoryInputStream {
 	}
 
 	@Override
+	public int read(final byte[] buffer, final int offset, final int length) throws IOException {
+		throwExceptionIfClosed();
+
+		// if buffer is null, we shall throw exception...
+		if (buffer == null) { throw new IllegalArgumentException("Provided buffer is null."); }
+		// if offset is less than zero (0) or, the length is less than zero (0),
+		// or the summation of the offset and the length exceeds the buffer length,
+		// we shall throw exception...
+		if (offset < 0 || length < 0 || offset + length > buffer.length) {
+			throw new IllegalArgumentException("Invalid offset or length provided.");
+		}
+
+		// if length is zero (0), we shall return zero (0) as no byte is read...
+		if (length == 0) { return 0; }
+
+		final var available = available();
+
+		if (available < 1) { return -1; }
+
+		final var _length = Math.min(available, length);
+		final var globalBuffer = getBuffer();
+		final var currentPosition = getCurrentPosition();
+
+		System.arraycopy(globalBuffer, currentPosition, buffer, offset, _length);
+		setCurrentPosition(currentPosition + _length);
+
+		return _length;
+	}
+
+	@Override
 	public String readString(final int length) throws IllegalArgumentException, IOException {
 		return readString(length, StandardCharsets.UTF_8);
 	}
